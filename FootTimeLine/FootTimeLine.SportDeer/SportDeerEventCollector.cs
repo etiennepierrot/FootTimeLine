@@ -44,7 +44,7 @@ namespace FootTimeLine.SportDeer
             var assister =  GetAssister(@event);
             TypeGoal type = @event.goal_type_code == "og" ? TypeGoal.OwnGoal : TypeGoal.Normal;
             return new Goal(
-                TimeSpan.FromMilliseconds(@event.elapsed),
+                TimeSpan.FromMinutes(@event.elapsed),
                 scorer, 
                 assister, 
                 type);
@@ -53,7 +53,7 @@ namespace FootTimeLine.SportDeer
         private Player GetScorer(Event @event)
         {
             var scorerEntity = GetPlayer(@event.id_team_season_scorer);
-            return new Player(scorerEntity.name);
+            return new Player(scorerEntity.player_name);
         }
 
         private Player GetAssister(Event @event)
@@ -64,7 +64,7 @@ namespace FootTimeLine.SportDeer
             }
 
             var assister = GetPlayer(@event.id_team_season_assister);
-            return new Player(assister.name);
+            return new Player(assister.player_name);
         }
 
         private Season GetSeason(FootballGame footballGame)
@@ -73,9 +73,10 @@ namespace FootTimeLine.SportDeer
             return league.Seasons.Last();
         }
 
-        private Connector.Entity GetPlayer(long idPlayer)
+        private PlayerTeamSeason GetPlayer(long idPlayer)
         {
-            return _connector.Request<Connector.Response<Connector.Entity>>($"v1/players/{idPlayer}", 1)
+            return _connector
+                .Request<Connector.Response<PlayerTeamSeason>>($"v1/teamSeasonPlayers/{idPlayer}", 1)
                 .Data.docs.Single();
         }
 
@@ -118,6 +119,11 @@ namespace FootTimeLine.SportDeer
         class Season : Connector.Entity
         {
             public string Years { get; set; }
+        }
+
+        class PlayerTeamSeason : Connector.Entity
+        {
+            public string player_name { get; set; }
         }
 
         class Team : Connector.Entity

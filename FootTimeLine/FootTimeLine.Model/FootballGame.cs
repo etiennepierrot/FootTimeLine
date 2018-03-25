@@ -24,6 +24,13 @@ namespace FootTimeLine.Model
             _events.Add(@event);
         }
 
+        public List<Goal> GetGoals()
+        {
+            return _events
+                .Where(e => e is Goal)
+                .Cast<Goal>().ToList();
+        }
+
         public List<Player> GetScorers()
         {
             return _events

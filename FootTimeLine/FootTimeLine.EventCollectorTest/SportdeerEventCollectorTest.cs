@@ -1,4 +1,5 @@
-﻿using System.Configuration;
+﻿using System;
+using System.Configuration;
 using FootTimeLine.Model;
 using FootTimeLine.SportDeer;
 using NUnit.Framework;
@@ -8,7 +9,7 @@ namespace FootTimeLine.EventCollectorTest
     public class SportdeerEventCollectorTest
     {
         private FootballGame _footballGame;
-        private readonly Player _mitroglou = new Player("Konstantinos Katsouranis");
+        private readonly Player _mitroglou = new Player("Konstantinos Mitroglou");
 
         [SetUp]
         public void Setup()
@@ -17,6 +18,7 @@ namespace FootTimeLine.EventCollectorTest
             SportDeerEventCollector collector = new SportDeerEventCollector(refreshToken);
             Service service = new Service(collector);
             _footballGame = service.Collect("Marseille", "Lyon", "Ligue 1");
+            _footballGame.GetGoals().ForEach(Console.WriteLine);
         }
 
         [Test]

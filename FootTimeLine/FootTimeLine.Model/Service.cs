@@ -16,10 +16,7 @@ namespace FootTimeLine.Model
             FootballGame footballGame = new FootballGame(homeTeam, awayTeam, league);
             List<MatchEvent> matchEvents = _eventCollector.CollectEvent(footballGame);
 
-            foreach (var matchEvent in matchEvents)
-            {
-                footballGame.AddEvent(matchEvent);
-            }
+            matchEvents.ForEach( e => footballGame.AddEvent(e));
 
             return footballGame;
         }
