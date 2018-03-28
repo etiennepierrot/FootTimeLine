@@ -16,7 +16,7 @@ namespace FootTimeLine.EventCollectorTest
         {
             string refreshToken = ConfigurationManager.AppSettings["Deersport.RefreshToken"];
             SportDeerEventCollector collector = new SportDeerEventCollector(refreshToken);
-            Service service = new Service(collector);
+            Service service = new Service(collector, new TweetConnector(null));
             _footballGame = service.Collect("Marseille", "Lyon", "Ligue 1");
             _footballGame.GetGoals().ForEach(Console.WriteLine);
         }
