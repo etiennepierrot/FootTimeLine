@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace FootTimeLine.Model
 {
@@ -24,14 +25,11 @@ namespace FootTimeLine.Model
             return footballGame;
         }
 
-        public void FetchTweet(FootballGame footballGame, string hashtag)
+        public Dictionary<Goal, Tweet> FetchTweet(FootballGame footballGame, string hashtag)
         {
-            foreach (var goal in footballGame.GetGoals())
-            {
-                var tweet = _tweetConnector.ExtractPopularTweet(goal.Scorer + " " + hashtag);
-                Console.WriteLine(goal);
-                Console.WriteLine($"{tweet.Text}");
-            }
+            return footballGame
+                .GetGoals()
+                .ToDictionary(g => g, g =>  _tweetConnector.ExtractPopularTweet(g.Scorer + " " + hashtag));
         }
     }
 }

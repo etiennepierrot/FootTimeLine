@@ -11,6 +11,6 @@ function TimelineViewModel() {
     self.game = ko.observable(new Game("Marseille", "Lyon", "Ligue 1", "#OMOL"));
     self.getTimeline = function() {
         var gameModelPost = ko.mapping.toJS(self.game);
-        ko.utils.postJson("Home/GetTimeline", { gameModelPost : gameModelPost});
+        ko.utils.postJson("/Home/GetTimeline", { gameModelPost : gameModelPost});
     }
 }

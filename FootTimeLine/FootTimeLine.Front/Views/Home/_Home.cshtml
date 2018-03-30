@@ -1,4 +1,5 @@
-﻿@using System.Web.Mvc.Html
+﻿@model FootTimeLine.Front.Models.FeedDto
+
 <script type="text/javascript" src="~/Scripts/App/Timeline.js"></script>
 <script type="text/javascript">
     $(document).ready(function () {
@@ -6,44 +7,53 @@
     })
 </script>
 
+@*<form class="form-inline">
+        <div data-bind="with: game">
+            <div class="col">
+                <input type="text" class="form-control" placeholder="Domicile" data-bind="value: homeTeam">
+            </div>
+            <div class="col">
+                <input type="text" class="form-control" placeholder="Exterieur" data-bind="value: awayTeam">
+            </div>
+            <div class="col">
+                <input type="text" class="form-control" placeholder="Championnat" data-bind="value: league">
+            </div>
+            <div class="col">
+                <input type="text" class="form-control" placeholder="hashtag" data-bind="value: hashTag">
+            </div>
+        </div>
+
+    </form>*@
+
+<form>
+    <div class="form-inline">
+        <div data-bind="with: game">
+            <div class="col">
+                <input type="text" class="form-control mb-2 mr-sm-2" placeholder="Domicile" data-bind="value: homeTeam">
+                <input type="text" class="form-control mb-2 mr-sm-2" placeholder="Exterieur" data-bind="value: awayTeam">
+            </div>
+            <div class="col">
+                <input type="text" class="form-control mb-2 mr-sm-2" placeholder="Championnat" data-bind="value: league">
+                <input type="text" class="form-control mb-2 mr-sm-2" placeholder="hashtag" data-bind="value: hashTag">
+            </div>
+        </div>
+        <div class="col">
+            <button type="submit" class="btn btn-primary mb-2" data-bind="click: getTimeline">One Two Tweet !!!</button>
+        </div>
+    </div>
+
+
+</form>
+
 <div class="jumbotron">
-    <h1>ASP.NET</h1>
-    <p class="lead">ASP.NET is a free web framework for building great Web sites and Web applications using HTML, CSS, and JavaScript.</p>
-    <p><a href="https://asp.net" class="btn btn-primary btn-lg">Learn more &raquo;</a></p>
-</div>
-<div class="row">
-    <div data-bind="with: game">
-        <p>Home Team : <input type="text" data-bind="value: homeTeam" /></p>
-        <p>Away Team : <input type="text" data-bind="value: awayTeam" /></p>
-        <p>League    : <input type="text" data-bind="value: league" /></p>
-        <p>Hashtag   : <input type="text" data-bind="value: hashTag" /></p>
+    @foreach (var e in Model.EventDtos)
+    {
+    <div class="row">
+        <div class="col">@e.Tweet</div>
+        <div class="col">@e.EventDescription</div>    
+
     </div>
-    <input type="button" value="One Two Tweet !!!" data-bind="click: getTimeline" />
-
-
-</div>
-<div class="row">
-    <div class="col-md-4">
-        <h2>Your information</h2>
-        <p>This section shows how you can call ASP.NET Web API to get the user details.</p>
-
-        <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=273732">Learn more &raquo;</a></p>
-    </div>
-
-    <div class="col-md-4">
-        <h2>Getting started</h2>
-        <p>
-            ASP.NET Single Page Application (SPA) helps you build applications that include significant client-side interactions using HTML, CSS, and JavaScript.
-            It's now easier than ever before to getting started writing highly interactive web applications.
-        </p>
-        <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=273732">Learn more &raquo;</a></p>
-    </div>
-
-    <div class="col-md-4">
-        <h2>Web Hosting</h2>
-        <p>You can easily find a web hosting company that offers the right mix of features and price for your applications.</p>
-        <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301867">Learn more &raquo;</a></p>
-    </div>
+    }
 </div>
 
-<!-- /ko -->
+

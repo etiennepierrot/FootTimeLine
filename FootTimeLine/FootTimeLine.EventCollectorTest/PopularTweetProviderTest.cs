@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Specialized;
 using System.Configuration;
 using System.Linq;
 using System.Threading.Tasks;
@@ -12,13 +13,14 @@ namespace FootTimeLine.EventCollectorTest
     public class PopularTweetProviderTest
     {
         private FootballGame _footballGame;
+        private readonly NameValueCollection _conf = ConfigurationManager.AppSettings;
 
         [SetUp]
         public void Setup()
         {
-            string refreshToken = ConfigurationManager.AppSettings["Deersport.RefreshToken"];
+            string refreshToken = _conf["Deersport.RefreshToken"];
             SportDeerEventCollector collector = new SportDeerEventCollector(refreshToken);
-            Service service = new Service(collector, new TweetConnector(CreateTwitterContext().Result));
+            Service service = new Service(collector, new TweetConnector.TweetConnector(CreateTwitterContext().Result));
             _footballGame = service.Collect("Marseille", "Lyon", "Ligue 1");
             service.FetchTweet(_footballGame, "#OMOL");
             //_footballGame.GetGoals().ForEach(Console.WriteLine);
@@ -35,14 +37,14 @@ namespace FootTimeLine.EventCollectorTest
 
        
 
-        private static async Task<TwitterContext> CreateTwitterContext()
+        private async Task<TwitterContext> CreateTwitterContext()
         {
             var auth = new ApplicationOnlyAuthorizer
             {
-                CredentialStore = new InMemoryCredentialStore()
+                CredentialStore = new InMemoryCredentialStore
                 {
-                    ConsumerKey = "MBLi0jie7W0iSA8ChDF0waCmx",
-                    ConsumerSecret = "iA56ljZ8UFwqt5GXGWHx0qNRXM8AxS2fFxS034URsMuCWL4Hzo"
+                    ConsumerKey = _conf["Twitter.ConsumerKey"],
+                    ConsumerSecret = _conf["Twitter.ConsumerSecret"]
                 }
             };
 

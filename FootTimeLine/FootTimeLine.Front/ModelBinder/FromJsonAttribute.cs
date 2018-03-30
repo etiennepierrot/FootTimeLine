@@ -25,7 +25,7 @@ namespace FootTimeLine.Front.ModelBinder
 
                     return Serializer.Deserialize(stringified, bindingContext.ModelType);
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     //TODO: Handle specific exceptions
                     return null;

@@ -1,10 +1,9 @@
-﻿using System;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using FootTimeLine.Model;
 using LinqToTwitter;
 
-namespace FootTimeLine.EventCollectorTest
+namespace FootTimeLine.TweetConnector
 {
     public class TweetConnector : ITweetConnector
     {
@@ -17,16 +16,17 @@ namespace FootTimeLine.EventCollectorTest
 
         public Tweet ExtractPopularTweet(string query)
         {
-            Status tweet =
-                (from search in _context.Search
+            var status = (from search in _context.Search
                     where search.Type == SearchType.Search &&
                           search.Query == query &&
                           search.ResultType == ResultType.Mixed
-                    select search)
-                .SingleOrDefault()
-                ?.Statuses.First();          ;
+                    select search.Statuses)
+                .Single()
+                .FirstOrDefault();
 
-            return new Tweet(tweet.User.ScreenNameResponse, tweet.Text, tweet.RetweetCount);
+            return status == null
+                ? Tweet.Null 
+                : new Tweet(status.User.ScreenNameResponse, status.Text, status.RetweetCount);
         }
     }
 }

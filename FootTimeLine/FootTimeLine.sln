@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FootTimeLine.Model", "FootT
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FootTimeLine.Front", "FootTimeLine.Front\FootTimeLine.Front.csproj", "{A390E10C-6FBC-482B-B822-BDF62F99C520}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FootTimeLine.TweetConnector", "FootTimeLine.TweetConnector\FootTimeLine.TweetConnector.csproj", "{B610EE75-D4F4-40EB-8E5F-C6076013E041}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{A390E10C-6FBC-482B-B822-BDF62F99C520}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A390E10C-6FBC-482B-B822-BDF62F99C520}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A390E10C-6FBC-482B-B822-BDF62F99C520}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B610EE75-D4F4-40EB-8E5F-C6076013E041}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B610EE75-D4F4-40EB-8E5F-C6076013E041}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B610EE75-D4F4-40EB-8E5F-C6076013E041}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B610EE75-D4F4-40EB-8E5F-C6076013E041}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
