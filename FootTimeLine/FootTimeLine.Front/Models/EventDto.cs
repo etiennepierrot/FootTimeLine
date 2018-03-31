@@ -3,6 +3,6 @@
     public class EventDto
     {
         public string EventDescription { get; set; }
-        public string Tweet { get; set; }
+        public string TweetHtml { get; set; }
     }
 }

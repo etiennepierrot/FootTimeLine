@@ -48,8 +48,8 @@ namespace FootTimeLine.Front.Controllers
         {
             var events = tweets.Select(t => new EventDto
             {
-                Tweet = t.Key.ToString(),
-                EventDescription = t.Value.Text
+                TweetHtml = t.Value.Html,
+                EventDescription = t.Key.ToString()
             });
 
             return new FeedDto

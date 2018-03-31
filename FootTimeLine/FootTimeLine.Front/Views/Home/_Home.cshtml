@@ -49,8 +49,8 @@
     @foreach (var e in Model.EventDtos)
     {
     <div class="row">
-        <div class="col">@e.Tweet</div>
-        <div class="col">@e.EventDescription</div>    
+        <div class="col">@e.EventDescription</div>
+        <div class="col">@Html.Raw(e.TweetHtml)</div>
 
     </div>
     }
