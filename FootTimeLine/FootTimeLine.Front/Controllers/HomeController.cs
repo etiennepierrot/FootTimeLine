@@ -6,7 +6,7 @@ using FootTimeLine.Front.ModelBinder;
 using FootTimeLine.Front.Models;
 using FootTimeLine.Model;
 using FootTimeLine.SportDeer;
-using LinqToTwitter;
+using FootTimeLine.TweetConnector;
 
 namespace FootTimeLine.Front.Controllers
 {
@@ -62,30 +62,11 @@ namespace FootTimeLine.Front.Controllers
         {
             var conf = ConfigurationManager.AppSettings;
             var sportDeerEventCollector = new SportDeerEventCollector(conf["Deersport.RefreshToken"]);
-            var twitterContext = CreateTwitterContext();
-            var tweetConnector = new TweetConnector.TweetConnector(twitterContext);
+            var tweetConnector = new TweetinviConnector();
             Service service = new Service(
                 sportDeerEventCollector,
                 tweetConnector);
             return service;
-        }
-
-        private TwitterContext CreateTwitterContext()
-        {
-            var conf = ConfigurationManager.AppSettings;
-            var consumerKey = conf["Twitter.ConsumerKey"];
-            var consumerSecret = conf["Twitter.ConsumerSecret"];
-            var auth = new ApplicationOnlyAuthorizer()
-            {
-                CredentialStore = new InMemoryCredentialStore
-                {
-                    ConsumerKey = consumerKey,
-                    ConsumerSecret = consumerSecret
-                }
-            };
-
-            auth.AuthorizeAsync().Wait();
-            return new TwitterContext(auth);
         }
     }
 }
