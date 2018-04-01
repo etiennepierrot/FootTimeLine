@@ -15,21 +15,38 @@ namespace FootTimeLine.Model
             _tweetConnector = tweetConnector;
         }
 
-        public FootballGame Collect(string homeTeam, string awayTeam, string league)
+        public FootballGame Collect(FootballGame game)
         {
-            FootballGame footballGame = new FootballGame(homeTeam, awayTeam, league);
-            List<MatchEvent> matchEvents = _eventCollector.CollectEvent(footballGame);
+            _eventCollector.CollectEvent(game);
 
-            matchEvents.ForEach( e => footballGame.AddEvent(e));
-
-            return footballGame;
+            return game;
         }
 
-        public Dictionary<Goal, Tweet> FetchTweet(FootballGame footballGame, string hashtag)
+        public TimeLine BuildTimeLine(FootballGame game)
+        {
+            _eventCollector.CollectEvent(game);
+            var tweets = _tweetConnector.GetMostPopularTweets(game);
+            return new TimeLine(game, tweets);
+        }
+
+        public Dictionary<Goal, Tweet> FetchTweet(FootballGame footballGame)
         {
             return footballGame
                 .GetGoals()
-                .ToDictionary(g => g, g =>  _tweetConnector.ExtractPopularTweet(g.Scorer + " " + hashtag));
+                .ToDictionary(g => g, g => _tweetConnector.ExtractPopularTweet(footballGame.HashTag, g));
         }
+    }
+
+    public class Element
+    {
+        public Element(MatchEvent @event, Tweet tweet)
+        {
+            Event = @event;
+            Tweet = tweet;
+        }
+
+        public MatchEvent Event { get; }
+        public TimeSpan Elapsed => Event.When;
+        public Tweet Tweet { get; }
     }
 }

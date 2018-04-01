@@ -8,23 +8,27 @@ namespace FootTimeLine.SportDeer
     public class SportDeerEventCollector : IEventCollector
     {
         private readonly Connector _connector;
-        
+
         public SportDeerEventCollector(string refreshToken)
         {
             _connector = new Connector(refreshToken);
         }
 
-        
+
         public List<MatchEvent> CollectEvent(FootballGame footballGame)
         {
             var season = GetSeason(footballGame);
             var (homeTeam, awayTeam) = GetTeams(footballGame, season);
             SportDeerMatch sportDeerMatch = GetMatch(homeTeam, awayTeam);
+            footballGame.AddEvent(new MatchBegin(sportDeerMatch.game_started_at));
 
-            return sportDeerMatch
-                    .events
-                    .Select(CreateEvent)
-                    .ToList();
+            sportDeerMatch
+                .events
+                .ForEach(e => footballGame.AddEvent(CreateEvent(e)));
+
+            footballGame.AddEvent(new MatchEnd(sportDeerMatch.game_started_at, sportDeerMatch.game_ended_at));
+
+            return footballGame.Events;
         }
 
         private MatchEvent CreateEvent(Event @event)
@@ -34,19 +38,19 @@ namespace FootTimeLine.SportDeer
                 case "goal":
                     return CreateGoalEvent(@event);
                 default:
-                    return new GenericEvent();
+                    return new GenericEvent(TimeSpan.FromMinutes(@event.elapsed));
             }
         }
 
         private MatchEvent CreateGoalEvent(Event @event)
         {
             var scorer = GetScorer(@event);
-            var assister =  GetAssister(@event);
+            var assister = GetAssister(@event);
             TypeGoal type = @event.goal_type_code == "og" ? TypeGoal.OwnGoal : TypeGoal.Normal;
             return new Goal(
                 TimeSpan.FromMinutes(@event.elapsed),
-                scorer, 
-                assister, 
+                scorer,
+                assister,
                 type);
         }
 
@@ -137,6 +141,8 @@ namespace FootTimeLine.SportDeer
             public int id_team_season_home { get; set; }
             public int number_goal_team_away { get; set; }
             public int number_goal_team_home { get; set; }
+            public DateTime game_started_at { get; set; }
+            public DateTime game_ended_at { get; set; }
             public List<Event> events { get; set; }
         }
 

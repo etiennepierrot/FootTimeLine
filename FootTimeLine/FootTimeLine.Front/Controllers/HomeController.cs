@@ -24,49 +24,55 @@ namespace FootTimeLine.Front.Controllers
             return GetTimeline(new GameModelPost
             {
                 League = "Ligue 1",
-                HashTag = "#OMOL",
-                AwayTeam = "Lyon",
-                HomeTeam = "Marseille"
+                HashTag = "#DFCOOM",
+                AwayTeam = "Marseille",
+                HomeTeam = "Dijon"
             });
         }
         
 
         public ActionResult GetTimeline([FromJson]GameModelPost gameModelPost)
         {
-            FootballGame game = _service.Collect(
-                gameModelPost.HomeTeam,
-                gameModelPost.AwayTeam,
-                gameModelPost.League
-            );
+            string homeTeam = gameModelPost.HomeTeam;
+            string awayTeam = gameModelPost.AwayTeam;
+            string league = gameModelPost.League;
+            string hashTag = gameModelPost.HashTag;
 
-            var tweets = _service.FetchTweet(game, gameModelPost.HashTag);
+            FootballGame footballGame = new FootballGame(homeTeam, awayTeam, league, hashTag);
+            var timeLine = _service.BuildTimeLine(footballGame);
 
-            return View("Index", ConvertToDto(tweets));
+            return View("Index", ConvertToDto(timeLine));
+        }
+
+        private FeedDto ConvertToDto(TimeLine timeLine)
+        {
+            return new FeedDto
+            {
+                EventDtos = timeLine.GetElements().Select(e => new EventDto
+                {
+                    TweetHtml = e.Tweet.Display(),
+                    EventDescription = e.Event.ToString()
+                }).ToList()
+            };
         }
 
         private static FeedDto ConvertToDto(Dictionary<Goal, Tweet> tweets)
         {
-            var events = tweets.Select(t => new EventDto
-            {
-                TweetHtml = t.Value.Html,
-                EventDescription = t.Key.ToString()
-            });
-
             return new FeedDto
             {
-                EventDtos = events.ToList()
+                EventDtos = tweets.Select(t => new EventDto
+                {
+                    TweetHtml = t.Value.Display(),
+                    EventDescription = t.Key.ToString()
+                }).ToList()
             };
         }
 
-        private Service CreateService()
+        private static Service CreateService()
         {
-            var conf = ConfigurationManager.AppSettings;
-            var sportDeerEventCollector = new SportDeerEventCollector(conf["Deersport.RefreshToken"]);
-            var tweetConnector = new TweetinviConnector();
-            Service service = new Service(
-                sportDeerEventCollector,
-                tweetConnector);
-            return service;
+            return new Service(
+                new SportDeerEventCollector(ConfigurationManager.AppSettings["Deersport.RefreshToken"]),
+                new TweetinviConnector());
         }
     }
 }

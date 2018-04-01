@@ -1,42 +1,53 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace FootTimeLine.Model
 {
     public class FootballGame
     {
-        private readonly List<MatchEvent> _events;
-
+        public List<MatchEvent> Events { get; }
+        public List<Tweet> Tweets { get; }
         public string HomeTeam { get; }
         public string AwayTeam { get; }
         public string League { get; }
+        public string HashTag { get; }
+        public DateTime MatchStart => ((MatchBegin) Events.Single(e => e is MatchBegin)).Date;
+        public DateTime MatchStop => MatchStart.Add(Events.OrderBy(e => e.When.Minutes).Last().When);
 
-        public FootballGame(string homeTeam, string awayTeam, string league)
+
+        public FootballGame(string homeTeam, string awayTeam, string league, string hashTag)
         {
             HomeTeam = homeTeam;
             AwayTeam = awayTeam;
             League = league;
-            _events = new List<MatchEvent>();
+            HashTag = hashTag;
+            Events = new List<MatchEvent>();
+            Tweets = new List<Tweet>();
+        }
+
+        public void AddTweet(Tweet tweet)
+        {
+            Tweets.Add(tweet);
         }
 
         public void AddEvent(MatchEvent @event)
         {
-            _events.Add(@event);
+            Events.Add(@event);
         }
 
         public List<Goal> GetGoals()
         {
-            return _events
+            return Events
                 .Where(e => e is Goal)
                 .Cast<Goal>().ToList();
         }
 
         public List<Player> GetScorers()
         {
-            return _events
+            return Events
                 .Where(e => e is Goal)
                 .Cast<Goal>().Select(x => x.Scorer).ToList();
         }
-
     }
 }
