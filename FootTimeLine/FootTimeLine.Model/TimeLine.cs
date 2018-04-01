@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using FootTimeLine.Model.Events;
 
 namespace FootTimeLine.Model
 {
@@ -22,35 +23,44 @@ namespace FootTimeLine.Model
         {
             var matcher = new TweetMatcher(_tweets, Game);
             _elements.AddRange(GetElementEvent(matcher));
-            _elements.AddRange(GetTweets(t => t.Date < Game.MatchStart));
-            _elements.AddRange(GetTweets(t => t.Date > Game.MatchStart && t.Date < Game.MatchStop));
-            _elements.AddRange(GetTweets(t => t.Date > Game.MatchStop));
+            _elements.AddRange(GetTweets(t => t.Date < Game.MatchStart, 2));
+            _elements.AddRange(GetTweets(t => t.Date > Game.MatchStart && t.Date < Game.MatchStop, 4));
+            _elements.AddRange(GetTweets(t => t.Date > Game.MatchStop, 2));
             return _elements.OrderBy(x => x.Elapsed);
         }
 
-        private IEnumerable<Element> GetTweets(Func<Tweet, bool> predicate)
+        private IEnumerable<Element> GetTweets(Func<Tweet, bool> predicate, int qty)
         {
-            var tweetWithoutEvent = _tweets.OrderByDescending(t => t.Popularity)
+            return _tweets.OrderByDescending(t => t.Popularity)
                 .Except(_elements.Select(e => e.Tweet))
                 .Where(predicate)
-                .Take(2);
-
-            return tweetWithoutEvent.Select(CreateElement);
+                .Take(qty)
+                .Select(CreateElement);
         }
 
         private Element CreateElement(Tweet tweet)
         {
             TimeSpan timeSpan = tweet.Date.Subtract(Game.MatchStart);
-            return new Element(new GenericEvent(timeSpan), tweet);
+            return new Element(new NoEvent(timeSpan), tweet);
         }
 
         private IEnumerable<Element> GetElementEvent(TweetMatcher matcher)
         {
             foreach (var matchEvent in Game.Events)
             {
-                var tweet = matcher.Find(matchEvent);
-                yield return new Element(matchEvent, tweet);
+                yield return new Element(matchEvent, FindMatchingTweet(matcher, matchEvent));
             }
+        }
+
+        private Tweet FindMatchingTweet(TweetMatcher matcher, MatchEvent matchEvent)
+        {
+            var tweets = matcher.Find(matchEvent);
+            var selectedTweet = tweets
+                .Except(_elements.Select(e => e.Tweet))
+                .OrderByDescending(t => t.Popularity)
+                .LastOrDefault();
+
+            return selectedTweet ?? Tweet.Null;
         }
     }
 }

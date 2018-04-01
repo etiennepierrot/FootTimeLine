@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using FootTimeLine.Model.Events;
 
 namespace FootTimeLine.Model
 {

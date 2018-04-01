@@ -5,6 +5,7 @@ using System.Web.Mvc;
 using FootTimeLine.Front.ModelBinder;
 using FootTimeLine.Front.Models;
 using FootTimeLine.Model;
+using FootTimeLine.Model.Events;
 using FootTimeLine.SportDeer;
 using FootTimeLine.TweetConnector;
 
@@ -41,13 +42,14 @@ namespace FootTimeLine.Front.Controllers
             FootballGame footballGame = new FootballGame(homeTeam, awayTeam, league, hashTag);
             var timeLine = _service.BuildTimeLine(footballGame);
 
-            return View("Index", ConvertToDto(timeLine));
+            return View("Index", ConvertToDto(timeLine, gameModelPost));
         }
 
-        private FeedDto ConvertToDto(TimeLine timeLine)
+        private FeedDto ConvertToDto(TimeLine timeLine, GameModelPost gameDto)
         {
             return new FeedDto
             {
+                GameDto = gameDto,
                 EventDtos = timeLine.GetElements().Select(e => new EventDto
                 {
                     TweetHtml = e.Tweet.Display(),

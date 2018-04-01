@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
 using FootTimeLine.Model;
+using FootTimeLine.Model.Events;
 using Tweetinvi;
 using Tweetinvi.Models;
 using Tweetinvi.Parameters;

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using FootTimeLine.Model;
+using FootTimeLine.Model.Events;
 
 namespace FootTimeLine.SportDeer
 {
@@ -37,8 +38,38 @@ namespace FootTimeLine.SportDeer
             {
                 case "goal":
                     return CreateGoalEvent(@event);
+                case "card":
+                    return CreateCardEvent(@event);
+                case "subst":
+                    return CreateSubstitutionEvent(@event);
                 default:
                     return new GenericEvent(TimeSpan.FromMinutes(@event.elapsed));
+            }
+        }
+
+        private MatchEvent CreateSubstitutionEvent(Event @event)
+        {
+            var when = TimeSpan.FromMinutes(@event.elapsed);
+            var playerOutObject = GetPlayer(@event.id_team_season_player_out);
+            var playerOut = new Player(playerOutObject.player_name);
+            var playerInObject = GetPlayer(@event.id_team_season_player_in);
+            var playerIn = new Player(playerInObject.player_name);
+            return new Substitution(when, playerOut, playerIn);
+        }
+
+        private MatchEvent CreateCardEvent(Event @event)
+        {
+            var when = TimeSpan.FromMinutes(@event.elapsed);
+            var playerObject = GetPlayer(int.Parse(@event.id_team_season_player));
+            var player = new Player(playerObject.player_name);
+            switch (@event.card_type)
+            {
+                case "y":
+                    return new YellowCard(when, player);
+                case "r":
+                    return new RedCard(when, player);
+                default:
+                    throw new ApplicationException("unknow card type");
             }
         }
 

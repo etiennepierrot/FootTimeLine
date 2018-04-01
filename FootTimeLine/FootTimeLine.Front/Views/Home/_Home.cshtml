@@ -3,27 +3,13 @@
 <script type="text/javascript" src="~/Scripts/App/Timeline.js"></script>
 <script type="text/javascript">
     $(document).ready(function () {
-        window.ko.applyBindings(new TimelineViewModel());
+        window.ko.applyBindings(new TimelineViewModel(
+            "@Model.GameDto.HomeTeam",
+            "@Model.GameDto.AwayTeam",
+            "@Model.GameDto.League",
+            "@Model.GameDto.HashTag"));
     })
 </script>
-
-@*<form class="form-inline">
-        <div data-bind="with: game">
-            <div class="col">
-                <input type="text" class="form-control" placeholder="Domicile" data-bind="value: homeTeam">
-            </div>
-            <div class="col">
-                <input type="text" class="form-control" placeholder="Exterieur" data-bind="value: awayTeam">
-            </div>
-            <div class="col">
-                <input type="text" class="form-control" placeholder="Championnat" data-bind="value: league">
-            </div>
-            <div class="col">
-                <input type="text" class="form-control" placeholder="hashtag" data-bind="value: hashTag">
-            </div>
-        </div>
-
-    </form>*@
 
 <form>
     <div class="form-inline">

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace FootTimeLine.Model
+namespace FootTimeLine.Model.Events
 {
     public class GenericEvent : MatchEvent
     {
@@ -8,7 +8,11 @@ namespace FootTimeLine.Model
         {
             When = when;
         }
-
         public override TimeSpan When { get; }
+
+        public override string ToString()
+        {
+            return "This events has not been parsed";
+        }
     }
 }
