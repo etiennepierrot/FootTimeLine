@@ -1,24 +1,32 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Globalization;
 using System.Linq;
+using System.Web;
 using FootTimeLine.Model;
 using FootTimeLine.Model.Events;
 using Tweetinvi;
+using Tweetinvi.Core.Web;
+using Tweetinvi.Logic.DTO;
 using Tweetinvi.Models;
 using Tweetinvi.Parameters;
+using Tweetinvi.WebLogic;
+using HttpMethod = Tweetinvi.Models.HttpMethod;
 using Tweet = FootTimeLine.Model.Tweet;
 
 namespace FootTimeLine.TweetConnector
 {
     public class TweetinviConnector : ITweetConnector
     {
+        private ITwitterCredentials _twitterCredentials;
+
         public TweetinviConnector()
         {
             ExceptionHandler.SwallowWebExceptions = false;
             var conf = ConfigurationManager.AppSettings;
-            var credential = Auth.SetApplicationOnlyCredentials(conf["Twitter.ConsumerKey"], conf["Twitter.ConsumerSecret"]);
-            Auth.InitializeApplicationOnlyCredentials(credential);
+            _twitterCredentials = Auth.SetApplicationOnlyCredentials(conf["Twitter.ConsumerKey"], conf["Twitter.ConsumerSecret"]);
+            Auth.InitializeApplicationOnlyCredentials(_twitterCredentials);
         }
 
         public void LoadTweet(FootballGame game)
@@ -29,20 +37,59 @@ namespace FootTimeLine.TweetConnector
 
         public List<Tweet> GetMostPopularTweets(FootballGame game)
         {
-            var searchParameter = new SearchTweetsParameters(game.HashTag)
+            TimeSpan oneHour = TimeSpan.FromHours(1);
+
+            return game.BuildQueriesGame()
+                .Select(SearchTweet)
+                .SelectMany(x => x)
+                .Distinct()
+                .Where(x =>
+                    x.Date > game.MatchStart.Subtract(oneHour)
+                    && x.Date < game.MatchStop.Add(oneHour))
+                .ToList();
+
+        }
+
+        private List<Tweet> SearchTweet(string query)
+        {
+            var searchParameter = new SearchTweetsParameters(query)
             {
-                SearchType = SearchResultType.Popular,
+                SearchType = SearchResultType.Mixed,
                 MaximumNumberOfResults = 100,
-                TweetSearchType = TweetSearchType.OriginalTweetsOnly,
-                //Until = game.MatchStop.Add(TimeSpan.FromHours(3))
+                TweetSearchType = TweetSearchType.OriginalTweetsOnly
             };
 
-            List<Tweet> mostPopularTweets = Search.SearchTweets(searchParameter)
+            List<Tweet> tweets = Search.SearchTweets(searchParameter)
                 .OrderByDescending(Popularity)
                 .Select(CreateTweet)
                 .ToList();
-            return mostPopularTweets;
+            return tweets;
         }
+
+        public List<Tweet> GetPopularTweetsPremium(FootballGame game)
+        {
+            var query = HttpUtility.UrlEncode($"{game.HashTag}");
+            string uri = $"https://api.twitter.com/1.1/tweets/search/30day/dev.json?query={query}";
+            var result = TwitterAccessor.GetQueryableJsonObjectFromGETQuery(uri);
+            
+            List<Tweet> tweets = new List<Tweet>();
+            foreach (var t in result["results"].Children())
+            {
+                var date = Parse(t["created_at"].ToString());
+                int rt = Int32.Parse(t["retweet_count"].ToString());
+                int fav = Int32.Parse(t["favorite_count"].ToString());
+                var tweet = new Tweet(long.Parse(t["id"].ToString()), t["text"].ToString(), rt + fav, date);
+                tweets.Add(tweet);
+            }
+
+            return tweets;
+        }
+
+        private DateTime Parse(string date)
+        {
+            return DateTime.ParseExact(date, "ddd MMM dd HH:mm:ss +ffff yyyy", new CultureInfo("en-US"));
+        }
+
 
         public Tweet ExtractPopularTweet(string hashTag, Goal goal)
         {
@@ -70,11 +117,16 @@ namespace FootTimeLine.TweetConnector
         }
     }
 
+    public class ResultTweet
+    {
+        public string Text { get; set; }
+    }
+
     class TweeinviTweet : Tweet
     {
         private readonly ITweet _tweet;
 
-        public TweeinviTweet(ITweet tweet) : base(tweet.Id, tweet.CreatedBy.Name, tweet.Text, tweet.RetweetCount + tweet.FavoriteCount, tweet.CreatedAt)
+        public TweeinviTweet(ITweet tweet) : base(tweet.Id, tweet.Text, tweet.RetweetCount + tweet.FavoriteCount, tweet.CreatedAt)
         {
             _tweet = tweet;
         }

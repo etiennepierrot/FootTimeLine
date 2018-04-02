@@ -21,7 +21,7 @@ namespace FootTimeLine.SportDeer
             var season = GetSeason(footballGame);
             var (homeTeam, awayTeam) = GetTeams(footballGame, season);
             SportDeerMatch sportDeerMatch = GetMatch(homeTeam, awayTeam);
-            footballGame.AddEvent(new MatchBegin(sportDeerMatch.game_started_at));
+            footballGame.AddEvent(new MatchBegin(sportDeerMatch.game_started_at, footballGame.HashTag));
 
             sportDeerMatch
                 .events

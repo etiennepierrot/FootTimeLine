@@ -25,9 +25,9 @@ namespace FootTimeLine.Front.Controllers
             return GetTimeline(new GameModelPost
             {
                 League = "Ligue 1",
-                HashTag = "#DFCOOM",
-                AwayTeam = "Marseille",
-                HomeTeam = "Dijon"
+                HashTag = "#OLTFC",
+                AwayTeam = "Toulouse",
+                HomeTeam = "Lyon"
             });
         }
         

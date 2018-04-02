@@ -50,5 +50,39 @@ namespace FootTimeLine.Model
                 .Where(e => e is Goal)
                 .Cast<Goal>().Select(x => x.Scorer).ToList();
         }
+
+        public string[] BuildQueriesGame()
+        {
+            return CreateEventQueries()
+                .ToArray()
+                .Distinct()
+                .ToArray();
+        }
+
+        private IEnumerable<string> CreateEventQueries()
+        {
+            foreach (var matchEvent in Events)
+            {
+                switch (matchEvent)
+                {
+                    case Goal g:
+                        yield return $"but {g.Scorer}";
+                        break;
+                    case Substitution s:
+                        yield return $"remplacement {s.PlayerIn} {s.PlayerOut}";
+                        break;
+                    case RedCard r:
+                        yield return $"carton rouge {r.Player}";
+                        break;
+                    case YellowCard y:
+                        yield return $"carton jaune {y.Player}";
+                        break;
+                    case MatchBegin b:
+                        yield return b.HashTag;
+                        break;
+                }
+            }
+
+        }
     }
 }

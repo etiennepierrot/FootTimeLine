@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Specialized;
 using System.Configuration;
+using System.Globalization;
 using System.Linq;
 using FootTimeLine.Model;
 using FootTimeLine.SportDeer;
@@ -10,6 +11,17 @@ using Tweetinvi.Core.Extensions;
 
 namespace FootTimeLine.EventCollectorTest
 {
+    public class TweetConnectorTest
+    {
+        [Test]
+        public void LoadTweetHashTag()
+        {
+            var sut = new TweetinviConnector();
+            var footballGame = new FootballGame("Lyon", "Toulouse", "Ligue 1", "#OLTFC");
+            var tweets = sut.GetMostPopularTweets(footballGame);
+        }
+    }
+
     public class TimelineBuilderTest
     {
         private readonly NameValueCollection _conf = ConfigurationManager.AppSettings;
