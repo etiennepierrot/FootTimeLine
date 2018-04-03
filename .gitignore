@@ -289,3 +289,5 @@ __pycache__/
 /FootTimeLine/FootTimeLine.EventCollectorTest/App.config
 /FootTimeLine/FootTimeLine.Front/app.config
 /FootTimeLine/FootTimeLine.Front/connectionStrings.config
+FootTimeLine/FootTimeLine.Front/Web.Release.config
+FootTimeLine/FootTimeLine.Front/Web.Release.config
