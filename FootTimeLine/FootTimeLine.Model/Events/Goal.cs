@@ -1,4 +1,5 @@
 ﻿using System;
+using Newtonsoft.Json;
 
 namespace FootTimeLine.Model.Events
 {
@@ -11,10 +12,15 @@ namespace FootTimeLine.Model.Events
             Assister = assister;
             Type = type;
         }
+        [JsonConstructor]
+        protected Goal() { }
 
-        public Player Scorer { get; }
-        public Player Assister { get; }
-        public TypeGoal Type { get; }
+        [JsonProperty]
+        public Player Scorer { get; private set; }
+        [JsonProperty]
+        public Player Assister { get; private set; }
+        [JsonProperty]
+        public TypeGoal Type { get; private set; }
 
         public override string ToString()
         {
@@ -34,6 +40,5 @@ namespace FootTimeLine.Model.Events
             return !Equals(Assister, Player.Null);
         }
 
-        public override TimeSpan When { get; }
     }
 }

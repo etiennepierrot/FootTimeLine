@@ -16,20 +16,20 @@ namespace FootTimeLine.SportDeer
         }
 
 
-        public List<MatchEvent> CollectEvent(FootballGame footballGame)
+        public List<MatchEvent> CollectEvent(GameId gameId)
         {
-            var season = GetSeason(footballGame);
-            var (homeTeam, awayTeam) = GetTeams(footballGame, season);
+            var season = GetSeason(gameId);
+            var (homeTeam, awayTeam) = GetTeams(gameId, season);
             SportDeerMatch sportDeerMatch = GetMatch(homeTeam, awayTeam);
-            footballGame.AddEvent(new MatchBegin(sportDeerMatch.game_started_at, footballGame.HashTag));
-
+            List<MatchEvent> events = new List<MatchEvent> {new MatchBegin(sportDeerMatch.game_started_at)};
+            
             sportDeerMatch
                 .events
-                .ForEach(e => footballGame.AddEvent(CreateEvent(e)));
+                .ForEach(e => events.Add(CreateEvent(e)));
 
-            footballGame.AddEvent(new MatchEnd(sportDeerMatch.game_started_at, sportDeerMatch.game_ended_at));
+            events.Add(new MatchEnd(sportDeerMatch.game_started_at, sportDeerMatch.game_ended_at));
 
-            return footballGame.Events;
+            return events;
         }
 
         private MatchEvent CreateEvent(Event @event)
@@ -102,9 +102,9 @@ namespace FootTimeLine.SportDeer
             return new Player(assister.player_name);
         }
 
-        private Season GetSeason(FootballGame footballGame)
+        private Season GetSeason(GameId gameId)
         {
-            var league = GetLeague(footballGame.League);
+            var league = GetLeague(gameId.League);
             return league.Seasons.Last();
         }
 
@@ -115,11 +115,11 @@ namespace FootTimeLine.SportDeer
                 .Data.docs.Single();
         }
 
-        private (Team homeTeam, Team awayTeam) GetTeams(FootballGame footballGame, Season season)
+        private (Team homeTeam, Team awayTeam) GetTeams(GameId gameId, Season season)
         {
             var teams = GetTeams(season);
-            var homeTeam = teams.Single(t => t.team_name == footballGame.HomeTeam);
-            var awayTeam = teams.Single(t => t.team_name == footballGame.AwayTeam);
+            var homeTeam = teams.Single(t => t.team_name == gameId.HomeTeam);
+            var awayTeam = teams.Single(t => t.team_name == gameId.AwayTeam);
             return (homeTeam, awayTeam);
         }
 

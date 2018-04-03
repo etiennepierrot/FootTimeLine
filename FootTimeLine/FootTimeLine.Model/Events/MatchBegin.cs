@@ -1,18 +1,23 @@
 ﻿using System;
+using Newtonsoft.Json;
 
 namespace FootTimeLine.Model.Events
 {
     public class MatchBegin : MatchEvent
     {
-        public MatchBegin(DateTime gameStartedAt, string hashTag)
+        public MatchBegin(DateTime gameStartedAt)
         {
             Date = gameStartedAt;
-            HashTag = hashTag;
             When = TimeSpan.Zero;
         }
 
-        public DateTime Date { get; }
-        public string HashTag { get; }
-        public override TimeSpan When { get; }
+        [JsonConstructor]
+        protected MatchBegin()
+        {
+            
+        }
+
+        [JsonProperty]
+        public DateTime Date { get; protected set; }
     }
 }

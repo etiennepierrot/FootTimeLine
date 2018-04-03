@@ -8,7 +8,5 @@ namespace FootTimeLine.Model.Events
         {
             When = gameEndedAt.Subtract(gameStart);
         }
-
-        public override TimeSpan When { get; }
     }
 }

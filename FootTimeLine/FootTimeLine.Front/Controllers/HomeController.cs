@@ -1,12 +1,11 @@
-﻿using System.Collections.Generic;
-using System.Configuration;
+﻿using System.Configuration;
 using System.Linq;
 using System.Web.Mvc;
 using FootTimeLine.Front.ModelBinder;
 using FootTimeLine.Front.Models;
 using FootTimeLine.Model;
-using FootTimeLine.Model.Events;
 using FootTimeLine.SportDeer;
+using FootTimeLine.SQLPersistence;
 using FootTimeLine.TweetConnector;
 
 namespace FootTimeLine.Front.Controllers
@@ -39,8 +38,8 @@ namespace FootTimeLine.Front.Controllers
             string league = gameModelPost.League;
             string hashTag = gameModelPost.HashTag;
 
-            FootballGame footballGame = new FootballGame(homeTeam, awayTeam, league, hashTag);
-            var timeLine = _service.BuildTimeLine(footballGame);
+            var gameId = new GameId(homeTeam, awayTeam, league);
+            var timeLine = _service.BuildTimeLine(gameId, hashTag);
 
             return View("Index", ConvertToDto(timeLine, gameModelPost));
         }
@@ -58,23 +57,11 @@ namespace FootTimeLine.Front.Controllers
             };
         }
 
-        private static FeedDto ConvertToDto(Dictionary<Goal, Tweet> tweets)
-        {
-            return new FeedDto
-            {
-                EventDtos = tweets.Select(t => new EventDto
-                {
-                    TweetHtml = t.Value.Display(),
-                    EventDescription = t.Key.ToString()
-                }).ToList()
-            };
-        }
-
         private static Service CreateService()
         {
             return new Service(
                 new SportDeerEventCollector(ConfigurationManager.AppSettings["Deersport.RefreshToken"]),
-                new TweetinviConnector());
+                new TweetinviConnector(), new FootballGameRepository());
         }
     }
 }

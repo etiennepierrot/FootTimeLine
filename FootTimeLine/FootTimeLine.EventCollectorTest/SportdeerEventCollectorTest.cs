@@ -2,6 +2,7 @@
 using System.Configuration;
 using FootTimeLine.Model;
 using FootTimeLine.SportDeer;
+using FootTimeLine.SQLPersistence;
 using FootTimeLine.TweetConnector;
 using NUnit.Framework;
 
@@ -17,8 +18,8 @@ namespace FootTimeLine.EventCollectorTest
         {
             string refreshToken = ConfigurationManager.AppSettings["Deersport.RefreshToken"];
             SportDeerEventCollector collector = new SportDeerEventCollector(refreshToken);
-            Service service = new Service(collector, new TweetinviConnector());
-            _footballGame = service.Collect(new FootballGame("Marseille", "Lyon", "Ligue 1", "#OMOL"));
+            Service service = new Service(collector, new TweetinviConnector(), new FootballGameRepository());
+            _footballGame = service.Create(new GameId("Marseille", "Lyon", "Ligue 1"));
             _footballGame.GetGoals().ForEach(Console.WriteLine);
         }
 

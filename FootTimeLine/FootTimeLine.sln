@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FootTimeLine.Front", "FootT
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FootTimeLine.TweetConnector", "FootTimeLine.TweetConnector\FootTimeLine.TweetConnector.csproj", "{B610EE75-D4F4-40EB-8E5F-C6076013E041}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FootTimeLine.SQLPersistence", "FootTimeLine.SQLPersistence\FootTimeLine.SQLPersistence.csproj", "{ECB7898C-B875-4A92-8505-829AAF057821}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{B610EE75-D4F4-40EB-8E5F-C6076013E041}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B610EE75-D4F4-40EB-8E5F-C6076013E041}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B610EE75-D4F4-40EB-8E5F-C6076013E041}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ECB7898C-B875-4A92-8505-829AAF057821}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ECB7898C-B875-4A92-8505-829AAF057821}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ECB7898C-B875-4A92-8505-829AAF057821}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ECB7898C-B875-4A92-8505-829AAF057821}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -5,6 +5,6 @@ namespace FootTimeLine.Model
 {
     public interface IEventCollector
     {
-        List<MatchEvent> CollectEvent(FootballGame footballGame);
+        List<MatchEvent> CollectEvent(GameId gameId);
     }
 }

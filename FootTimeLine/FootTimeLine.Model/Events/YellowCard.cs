@@ -1,4 +1,5 @@
 ﻿using System;
+using Newtonsoft.Json;
 
 namespace FootTimeLine.Model.Events
 {
@@ -10,8 +11,8 @@ namespace FootTimeLine.Model.Events
             Player = player;
         }
 
-        public override TimeSpan When { get; }
-        public Player Player { get; }
+        [JsonProperty]
+        public Player Player { get; private set; }
 
         public override string ToString()
         {

@@ -7,22 +7,22 @@ namespace FootTimeLine.Model
 {
     public class FootballGame
     {
+        public GameId GameId => new GameId(HomeTeam, AwayTeam, League); 
         public List<MatchEvent> Events { get; }
         public List<Tweet> Tweets { get; }
         public string HomeTeam { get; }
         public string AwayTeam { get; }
         public string League { get; }
-        public string HashTag { get; }
         public DateTime MatchStart => ((MatchBegin) Events.Single(e => e is MatchBegin)).Date;
         public DateTime MatchStop => MatchStart.Add(Events.OrderBy(e => e.When.Minutes).Last().When);
+        public static FootballGame Null = new FootballGame(new GameId(null, null, null));
 
 
-        public FootballGame(string homeTeam, string awayTeam, string league, string hashTag)
+        public FootballGame(GameId gameId)
         {
-            HomeTeam = homeTeam;
-            AwayTeam = awayTeam;
-            League = league;
-            HashTag = hashTag;
+            HomeTeam = gameId.HomeTeam;
+            AwayTeam = gameId.AwayTeam;
+            League = gameId.League;
             Events = new List<MatchEvent>();
             Tweets = new List<Tweet>();
         }
@@ -51,11 +51,11 @@ namespace FootTimeLine.Model
                 .Cast<Goal>().Select(x => x.Scorer).ToList();
         }
 
-        public string[] BuildQueriesGame()
+        public string[] BuildQueriesGame(string hashtag)
         {
-            return CreateEventQueries()
-                .ToArray()
-                .Distinct()
+            var eventQueries = CreateEventQueries().ToList();
+            eventQueries.Add(hashtag);
+            return eventQueries.Distinct()
                 .ToArray();
         }
 
@@ -76,9 +76,6 @@ namespace FootTimeLine.Model
                         break;
                     case YellowCard y:
                         yield return $"carton jaune {y.Player}";
-                        break;
-                    case MatchBegin b:
-                        yield return b.HashTag;
                         break;
                 }
             }

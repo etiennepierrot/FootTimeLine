@@ -288,3 +288,4 @@ __pycache__/
 *.xsd.cs
 /FootTimeLine/FootTimeLine.EventCollectorTest/App.config
 /FootTimeLine/FootTimeLine.Front/app.config
+/FootTimeLine/FootTimeLine.Front/connectionStrings.config

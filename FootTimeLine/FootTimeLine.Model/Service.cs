@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using FootTimeLine.Model.Events;
 
 namespace FootTimeLine.Model
@@ -9,32 +7,34 @@ namespace FootTimeLine.Model
     {
         private readonly IEventCollector _eventCollector;
         private readonly ITweetConnector _tweetConnector;
+        private readonly IFootballGameRepository _repository;
 
-        public Service(IEventCollector eventCollector, ITweetConnector tweetConnector)
+        public Service(IEventCollector eventCollector, ITweetConnector tweetConnector, IFootballGameRepository repository)
         {
             _eventCollector = eventCollector;
             _tweetConnector = tweetConnector;
+            _repository = repository;
         }
 
-        public FootballGame Collect(FootballGame game)
+        public FootballGame Create(GameId gameId)
         {
-            _eventCollector.CollectEvent(game);
-
+            var events = _eventCollector.CollectEvent(gameId);
+            FootballGame game = new FootballGame(gameId);
+            events.ForEach(game.AddEvent);
+            _repository.Save(game);
             return game;
         }
 
-        public TimeLine BuildTimeLine(FootballGame game)
+        public TimeLine BuildTimeLine(GameId gameId, string hashTag)
         {
-            _eventCollector.CollectEvent(game);
-            var tweets = _tweetConnector.GetMostPopularTweets(game);
-            return new TimeLine(game, tweets);
-        }
-
-        public Dictionary<Goal, Tweet> FetchTweet(FootballGame footballGame)
-        {
-            return footballGame
-                .GetGoals()
-                .ToDictionary(g => g, g => _tweetConnector.ExtractPopularTweet(footballGame.HashTag, g));
+            FootballGame footballGame = _repository.Find(gameId);
+            if (footballGame == FootballGame.Null)
+            {
+                footballGame = Create(gameId);
+            }
+            
+            var tweets = _tweetConnector.GetMostPopularTweets(footballGame, hashTag);
+            return new TimeLine(footballGame, tweets);
         }
     }
 

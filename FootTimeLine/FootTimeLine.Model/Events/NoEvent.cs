@@ -8,7 +8,6 @@ namespace FootTimeLine.Model.Events
         {
             When = when;
         }
-        public override TimeSpan When { get; }
 
         public override string ToString()
         {

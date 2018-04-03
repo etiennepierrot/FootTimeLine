@@ -1,9 +1,11 @@
 ﻿using System;
+using Newtonsoft.Json;
 
 namespace FootTimeLine.Model.Events
 {
     public abstract class MatchEvent
     {
-        public  abstract  TimeSpan When { get; }
+        [JsonProperty]
+        public TimeSpan When { get; protected set; }
     }
 }
