@@ -4,6 +4,6 @@ namespace FootTimeLine.Model
 {
     public interface ITweetConnector
     {
-        List<Tweet> GetMostPopularTweets(FootballGame game, string hashtag);
+        List<Tweet> CollectTweets(FootballGame game, string hashtag);
     }
 }

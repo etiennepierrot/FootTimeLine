@@ -22,14 +22,18 @@ namespace FootTimeLine.TweetConnector
             Auth.InitializeApplicationOnlyCredentials(_twitterCredentials);
         }
 
-        public List<Tweet> GetMostPopularTweets(FootballGame game, string hashtag)
+        public List<Tweet> CollectTweets(FootballGame game, string hashtag)
         {
             TimeSpan oneHour = TimeSpan.FromHours(1);
 
-            return game.BuildQueriesGame(hashtag)
+            var tweets = game.BuildQueriesGame(hashtag)
                 .Select(SearchTweet)
                 .SelectMany(x => x)
                 .Distinct()
+                .ToList();
+
+            return tweets
+                .Select(CreateTweet)
                 .Where(x =>
                     x.Date > game.MatchStart.Subtract(oneHour)
                     && x.Date < game.MatchStop.Add(oneHour))
@@ -37,7 +41,7 @@ namespace FootTimeLine.TweetConnector
 
         }
 
-        private List<Tweet> SearchTweet(string query)
+        private List<ITweet> SearchTweet(string query)
         {
             var searchParameter = new SearchTweetsParameters(query)
             {
@@ -46,9 +50,8 @@ namespace FootTimeLine.TweetConnector
                 TweetSearchType = TweetSearchType.OriginalTweetsOnly
             };
 
-            List<Tweet> tweets = Search.SearchTweets(searchParameter)
+            var tweets = Search.SearchTweets(searchParameter)
                 .OrderByDescending(Popularity)
-                .Select(CreateTweet)
                 .ToList();
             return tweets;
         }
@@ -62,21 +65,6 @@ namespace FootTimeLine.TweetConnector
         private int Popularity(ITweet tweet)
         {
             return tweet.RetweetCount + tweet.FavoriteCount;
-        }
-    }
-
-    class TweeinviTweet : Tweet
-    {
-        private readonly ITweet _tweet;
-
-        public TweeinviTweet(ITweet tweet) : base(tweet.Id, tweet.Text, tweet.RetweetCount + tweet.FavoriteCount, tweet.CreatedAt)
-        {
-            _tweet = tweet;
-        }
-
-        public override string Display()
-        {
-            return _tweet.GenerateOEmbedTweet().HTML;
         }
     }
 }

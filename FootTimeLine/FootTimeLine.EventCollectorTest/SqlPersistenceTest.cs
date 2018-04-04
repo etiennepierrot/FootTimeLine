@@ -19,7 +19,7 @@ namespace FootTimeLine.EventCollectorTest
             var footballGame = new FootballGameWithEvent(gameId);
             string refreshToken = ConfigurationManager.AppSettings["Deersport.RefreshToken"];
 
-            var service = new Service(new SportDeerEventCollector(refreshToken), new TweetinviConnector(), new FootballGameRepository());
+            var service = new Service(new SportDeerEventCollector(refreshToken), new TweetinviConnector(), new FootballGameRepository(), new TweetRepository());
             var sut = new FootballGameRepository();
             service.Create(new GameId("Lyon", "Toulouse", "Ligue 1"));
 

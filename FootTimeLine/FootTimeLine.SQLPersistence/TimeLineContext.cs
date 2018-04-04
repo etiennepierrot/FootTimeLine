@@ -6,5 +6,6 @@ namespace FootTimeLine.SQLPersistence
     {
         public DbSet<FootballGameEntity> FootballGames { get; set; }
         public DbSet<EventData> EventDatas { get; set; }
+        public DbSet<TweetEntity> Tweets { get; set; }
     }
 }

@@ -54,6 +54,7 @@
     <Compile Include="Events\MatchEnd.cs" />
     <Compile Include="Events\MatchEvent.cs" />
     <Compile Include="Events\NoEvent.cs" />
+    <Compile Include="ITweetRepository.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Events\RedCard.cs" />

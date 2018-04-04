@@ -9,20 +9,23 @@ namespace FootTimeLine.SportDeer
     {
         private readonly string _refreshToken;
         private string _accessToken;
-        private string _uri = "https://api.sportdeer.com/";
+        private const string Uri = "https://api.sportdeer.com/";
 
         public Connector(string refreshToken)
         {
             _refreshToken = refreshToken;
-            _accessToken = GetAccessToken();
         }
 
         private string GetAccessToken()
         {
-            var client = new RestClient(_uri);
+            if (_accessToken != null) return _accessToken;
+
+            var client = new RestClient(Uri);
             var request = new RestRequest("v1/accessToken");
             request.AddParameter("refresh_token", _refreshToken, ParameterType.GetOrPost);
-            return client.Execute<AccessToken>(request).Data.new_access_token;
+            var response = client.Execute<AccessToken>(request);
+            _accessToken = response.Data.new_access_token;
+            return _accessToken;
         }
 
         class AccessToken
@@ -32,9 +35,9 @@ namespace FootTimeLine.SportDeer
 
         public IRestResponse<T> Request<T>(string endpoint, int page) where T : class, new()
         {
-            var client = new RestClient(_uri);
+            var client = new RestClient(Uri);
             var request = new RestRequest(endpoint);
-            request.AddParameter("access_token", _accessToken, ParameterType.GetOrPost);
+            request.AddParameter("access_token", GetAccessToken(), ParameterType.GetOrPost);
             request.AddParameter("page", page, ParameterType.GetOrPost);
             return client.Execute<T>(request);
         }

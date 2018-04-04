@@ -4,25 +4,22 @@ namespace FootTimeLine.Model
 {
     public class Tweet
     {
-        public Tweet(long id, string text, int popularity, DateTime date)
+        protected Tweet()
         {
-            Id = id;
-            Text = text;
-            Popularity = popularity;
-            Date = date;
+            
         }
 
-        public long Id { get; }
-        public string Text { get; }
-        public int Popularity { get; }
-        public DateTime Date { get; }
+        public long Id { get; protected set; }
+        public string Text { get; protected set; }
+        public int Popularity => RTCount + FavCount;
+        public DateTime Date { get; protected set; }
+        public bool Video { get; protected set; }
+        public int RTCount { get; protected set; }
+        public int FavCount { get; protected set; }
+        public long CreatorId { get; protected set; }
+        public string Language { get; protected set; }
 
-        public virtual string Display()
-        {
-            return string.Empty;
-        }
-
-        public static Tweet Null = new Tweet(0, null, 0, DateTime.UtcNow);
+        public static Tweet Null = new Tweet();
 
         public override string ToString()
         {

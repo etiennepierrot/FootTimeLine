@@ -20,7 +20,7 @@ namespace FootTimeLine.EventCollectorTest
         {
             string refreshToken = _conf["Deersport.RefreshToken"];
             SportDeerEventCollector collector = new SportDeerEventCollector(refreshToken);
-            _service = new Service(collector, new TweetinviConnector(), new FootballGameRepository());
+            _service = new Service(collector, new TweetinviConnector(), new FootballGameRepository(), new TweetRepository());
         }
 
         [Test]

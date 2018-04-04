@@ -8,8 +8,10 @@ using Newtonsoft.Json;
 
 namespace FootTimeLine.SQLPersistence
 {
-    public class FootballGameRepository : IFootballGameRepository
+    public class FootballGameRepository : Repository, IFootballGameRepository
     {
+        private readonly Assembly _assembly = typeof(MatchEvent).Assembly;
+
         public void Save(FootballGame game)
         {
             UnitOfWork(c =>
@@ -63,9 +65,11 @@ namespace FootTimeLine.SQLPersistence
 
                 if (entity == null) return FootballGame.Null;
 
-                var events = context.EventDatas
+                List<EventData> eventDatas = context.EventDatas
                     .Where(x => x.FootballGameId == entity.Id)
-                    .ToList()
+                    .ToList();
+
+                var events = eventDatas
                     .Select(ConvertToModel);
 
                 var game = new FootballGameProxy(entity);
@@ -76,18 +80,8 @@ namespace FootTimeLine.SQLPersistence
 
         private MatchEvent ConvertToModel(EventData eventData)
         {
-            Assembly asm = typeof(MatchEvent).Assembly;
-            Type type = asm.GetType(eventData.Type);
+            Type type = _assembly.GetType(eventData.Type);
             return JsonConvert.DeserializeObject(eventData.SerializedEvent, type) as MatchEvent;
-        }
-
-        private void UnitOfWork(Action<TimeLineContext> action)
-        {
-            using (var context = new TimeLineContext())
-            {
-                action(context);
-                context.SaveChanges();
-            }
         }
     }
 }

@@ -29,7 +29,6 @@ namespace FootTimeLine.Front.Controllers
                 HomeTeam = "Lyon"
             });
         }
-        
 
         public ActionResult GetTimeline([FromJson]GameModelPost gameModelPost)
         {
@@ -49,11 +48,18 @@ namespace FootTimeLine.Front.Controllers
             return new FeedDto
             {
                 GameDto = gameDto,
-                EventDtos = timeLine.GetElements().Select(e => new EventDto
-                {
-                    TweetHtml = e.Tweet.Display(),
-                    EventDescription = e.Event.ToString()
-                }).ToList()
+                EventDtos = timeLine.GetElements()
+                    .Select(EventDto)
+                    .ToList()
+            };
+        }
+
+        private static EventDto EventDto(Element e)
+        {
+            return new EventDto
+            {
+                TweetId = e.Tweet.Id,
+                EventDescription = e.Event.ToString()
             };
         }
 
@@ -61,7 +67,9 @@ namespace FootTimeLine.Front.Controllers
         {
             return new Service(
                 new SportDeerEventCollector(ConfigurationManager.AppSettings["Deersport.RefreshToken"]),
-                new TweetinviConnector(), new FootballGameRepository());
+                new TweetinviConnector(), 
+                new FootballGameRepository(), 
+                new TweetRepository());
         }
     }
 }

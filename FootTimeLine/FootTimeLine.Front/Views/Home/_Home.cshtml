@@ -1,5 +1,5 @@
 ﻿@model FootTimeLine.Front.Models.FeedDto
-
+<script src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 <script type="text/javascript" src="~/Scripts/App/Timeline.js"></script>
 <script type="text/javascript">
     $(document).ready(function () {
@@ -34,12 +34,30 @@
 <div class="jumbotron">
     @foreach (var e in Model.EventDtos)
     {
-    <div class="row">
-        <div class="col">@e.EventDescription</div>
-        <div class="col">@Html.Raw(e.TweetHtml)</div>
-
-    </div>
+        <div class="row">
+            <div class="col">@e.EventDescription</div>
+            <div class="col" id="@e.TweetId"></div>
+        </div>
     }
 </div>
+
+<script type="text/javascript">
+    var tweetIds = [];
+
+    @foreach (var d in Model.EventDtos.Select(x => x.TweetId))
+    {
+        @:tweetIds.push("@d");
+    }
+
+    tweetIds.forEach(function (element) {
+        if (element != "0") {
+            twttr.widgets.createTweet(
+                element,
+                document.getElementById(element));
+        }
+       
+    });
+
+</script>
 
 

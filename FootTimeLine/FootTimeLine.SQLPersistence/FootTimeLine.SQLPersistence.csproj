@@ -56,7 +56,10 @@
     <Compile Include="FootballGameProxy.cs" />
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Repository.cs" />
     <Compile Include="TimeLineContext.cs" />
+    <Compile Include="TweetEntity.cs" />
+    <Compile Include="TweetRepository.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
